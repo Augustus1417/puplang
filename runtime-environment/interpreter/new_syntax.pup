@@ -1,0 +1,57 @@
+# variables
+make num1
+make num2
+make name
+
+# assignment
+num1 gets 1
+num2 gets 2
+name gets "John"
+var gets True
+
+# print
+say "Hello World"
+say name
+say num1 + num2
+
+# condition
+when num1 is not 2
+  say "num is not 2"
+end
+
+# multiple conditions
+when num1 is 1
+  say "Hello" , name
+otherwise when num1 is 2
+  say "Goodbye" , name
+otherwise when num1 > 3
+  say "Good day" , name
+end
+
+# loop
+count i from 0 to 10
+  say i
+end
+
+# input number
+make num
+num asks number "Enter number:"
+say num
+
+# input string
+make word 
+word asks string "Enter string:"
+say word
+
+# functions
+task sample_function()
+  say "This is a function"
+  return "done"
+end
+
+task add(num1, num2)
+  say num1 + num2
+end
+
+say sample_function()
+add(1,2)

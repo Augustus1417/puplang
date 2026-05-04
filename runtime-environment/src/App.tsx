@@ -1,0 +1,155 @@
+import { useState, useEffect, useRef } from "react";
+import Header from "./components/Header";
+import RunButton from "./components/Editor/RunButton";
+import OutputPanel from "./components/OutputPanel";
+import ConsolePanel from "./components/ConsolePanel";
+import Editor from "./components/Editor/Editor";
+
+export default function App() {
+  const [code, setCode] = useState("");
+  const [output, setOutput] = useState("");
+  const [currentSayOutput, setCurrentSayOutput] = useState("");
+  const [consoleLog, setConsoleLog] = useState("");
+  const [isRunning, setIsRunning] = useState(false);
+  const stopRequestedRef = useRef(false);
+  const [currentFilePath, setCurrentFilePath] = useState<string | null>(null);
+
+  const [inputState, setInputState] = useState<{ prompt: string; type: string } | null>(null);
+  const [inputValue, setInputValue] = useState("");
+
+  const [awaitingSayOutput, setAwaitingSayOutput] = useState(false);
+
+  useEffect(() => {
+    if (!window.electron?.onPupInput) return;
+
+    const unsubscribe = window.electron.onPupInput(({ prompt, type }) => {
+      setInputState({ prompt, type });
+      setInputValue("");
+      setConsoleLog(`Awaiting ${type} input${prompt ? `: ${prompt}` : ""}`);
+    });
+
+    return unsubscribe;
+  }, []);
+
+  useEffect(() => {
+    if (!window.electron?.onSayOutput) {
+      console.log("onSayOutput not available");
+      return;
+    }
+
+    console.log("Setting up onSayOutput listener");
+    const unsubscribe = window.electron.onSayOutput(({ output: sayOutput }) => {
+      console.log("Say output received:", sayOutput);
+      setCurrentSayOutput(sayOutput);
+      setAwaitingSayOutput(true);
+      setConsoleLog(`Output: ${sayOutput}`);
+    });
+
+    return unsubscribe;
+  }, []);
+
+  const handleInputSubmit = () => {
+    if (!inputState) return;
+
+    window.electron?.sendPupInput(inputValue);
+    setConsoleLog(`Submitted ${inputState.type} input`);
+    setInputState(null);
+    setInputValue("");
+  };
+
+  const handleContinueAfterSay = () => {
+    setCurrentSayOutput("");
+    setAwaitingSayOutput(false);
+    window.electron?.resumePup?.();
+  };
+
+  const handleRun = async () => {
+    stopRequestedRef.current = false;
+    setIsRunning(true);
+    setConsoleLog("Running...");
+    setOutput("");
+    setInputState(null);
+    setInputValue("");
+
+    try {
+  const result = await window.api.runPup(code);
+      if (!stopRequestedRef.current) {
+        setOutput(result || "No output");
+        setConsoleLog("Execution completed successfully");
+      }
+    } catch (err: unknown) {
+      if (!stopRequestedRef.current) {
+        setOutput("");
+        let message = err instanceof Error ? err.message : String(err);
+  setConsoleLog(message.replace("Error invoking remote method 'pup:run': ", ""));
+      }
+    } finally {
+      setIsRunning(false);
+      stopRequestedRef.current = false;
+    }
+  };
+
+  const handleStop = () => {
+    // Fire-and-forget stop signal to main process. main can decide how to interrupt execution.
+    try {
+  (window.api as any).stopPup?.();
+    } catch (e) {
+      // ignore if not available
+    }
+    // Immediately clear output and update UI so user can run again
+    setIsRunning(false);
+    setOutput("");
+    stopRequestedRef.current = true;
+    setConsoleLog("Execution stopped by user");
+    // Clear any pending input state
+    setInputState(null);
+    setInputValue("");
+  };
+
+  return (
+    <div className="flex flex-col h-screen">
+      <Header
+        code={code}
+        onChangeCode={setCode}
+        setConsoleLog={setConsoleLog}
+        currentFilePath={currentFilePath}
+        setCurrentFilePath={setCurrentFilePath}
+      />
+
+      <div className="flex flex-1 bg-gray-800 text-gray-100 font-mono overflow-hidden">
+        {/* Left Panel - Editor */}
+        <div className="flex-[2]">
+          <Editor value={code} onChange={setCode} />
+        </div>
+
+        {/* Center - Run Button */}
+        <RunButton
+          onClick={handleRun}
+          disabled={isRunning || !!inputState || awaitingSayOutput}
+          onStop={handleStop}
+          isRunning={isRunning}
+        />
+
+        {/* Right Panel */}
+        <div className="flex-[1.2] flex flex-col border-l border-gray-700 relative">
+
+          {/* Output Panel now handles input too */}
+          <OutputPanel
+            output={awaitingSayOutput ? currentSayOutput : output}
+            awaitingInput={!!inputState}
+            isRunning={isRunning}
+            isError={consoleLog.startsWith("Error")}
+            inputState={inputState}
+            inputValue={inputValue}
+            setInputValue={setInputValue}
+            onSubmitInput={handleInputSubmit}
+            awaitingSayOutput={awaitingSayOutput}
+            onContinueSayOutput={handleContinueAfterSay}
+          />
+
+          <ConsolePanel logs={consoleLog} />
+        </div>
+      </div>
+    </div>
+  );
+}

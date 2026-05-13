@@ -1,0 +1,22 @@
+# Simple calculator demo (non-interactive)
+make a
+make b
+
+# assign two numbers
+a gets 12
+b gets 7
+
+say "a:", a
+say "b:", b
+say "a + b =", a + b
+say "a - b =", a - b
+say "a * b =", a * b
+say "a / b =", a / b
+say "a ^ b =", a ^ b
+
+# function style
+task add(x, y)
+  return x + y
+end
+
+say "add(5,3) =", add(5, 3)

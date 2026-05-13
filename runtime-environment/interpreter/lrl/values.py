@@ -298,7 +298,9 @@ class List(Value):
         return None, Value.illegal_operation(self, other)
 
     def copy(self):
-        c = List(self.elements)
+        # Create a shallow copy of the element list to avoid aliasing the
+        # same list between multiple List instances.
+        c = List(self.elements.copy())
         c.set_pos(self.pos_start, self.pos_end)
         c.set_context(self.context)
         return c

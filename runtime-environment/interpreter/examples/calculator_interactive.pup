@@ -1,0 +1,9 @@
+# Interactive calculator that asks the user for two numbers
+make x
+make y
+x asks number "Enter first number:"
+y asks number "Enter second number:"
+say "Sum:", x + y
+say "Product:", x * y
+say "Difference:", x - y
+say "Quotient:", x / y

@@ -3,22 +3,16 @@
  */
 
 const config = {
-  appId: "com.example.app",
+  appId: "com.puplang.app",
+  productName: "PupLang",
   generateUpdatesFilesForAllChannels: true,
-  // productName: `Example ${process.env.CHANNEL === 'beta' ? 'Beta' : ''}`,
   asar: true,
+  asarUnpack: ["interpreter/**/*"],
   directories: {
     buildResources: "public",
     output: "dist",
   },  
-  publish: {
-    provider: '{{github}}',
-    owner: '{{github.owner}}',
-    repo: '{{github.repo}}',
-    releaseType: process.env.CHANNEL === 'beta' ? 'prerelease' : 'release',
-    publishAutoUpdate: true,
-
-  },
+  publish: null,
   artifactName: process.env.CHANNEL === 'beta' ? 'Setup-${productName}${version}.${ext}' : 'Setup-${productName}${version}.${ext}',
   win: {
     icon: 'public/icon.ico',

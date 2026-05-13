@@ -1,11 +1,12 @@
 {
-    "name": "example",
+    "name": "puplang",
+    "productName": "PupLang",
     "author": {
-        "name": "Ra1NuX",
-        "email": "ra1nux.01@gmail.com"
+        "name": "Jed Cruz",
+        "email": "cruz.jedxyril@gmail.com"
     },
-    "version": "0.0.0",
-    "main": "electron/electron.ts",
+    "version": "1.0.1",
+    "main": "app/index.js",
     "scripts": {
         "dev": "vite",
         "build:electron": "bun ./esbuild.config.mjs",
@@ -52,8 +53,8 @@
         "wait-on": "^8.0.2"
     },
     "build": {
-        "appId": "com.example",
-        "productName": "example",
+        "appId": "com.puplang",
+        "productName": "PupLang",
         "copyright": "Copyright © 2021 ${author}",
         "linux": {
             "target": [
@@ -69,8 +70,10 @@
             "allowToChangeInstallationDirectory": true
         },
         "files": [
-            "dist/**/*",
-            "electron/**/*"
+            "app/index.js",
+            "app/preload.js",
+            "app/renderer",
+            "interpreter"
         ],
         "directories": {
             "buildResources": "assets",

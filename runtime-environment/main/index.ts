@@ -89,7 +89,10 @@ ipcMain.handle("pup:run", async (_event, code: string) => {
   }
 
   return new Promise<string>((resolve, reject) => {
-  const interpreterPath = path.join(__dirname, "..", "interpreter", "pup_interpreter.py");
+  // In dev: relative to main process; in prod: unpacked from asar
+  const interpreterPath = isDev
+    ? path.join(__dirname, "..", "interpreter", "pup_interpreter.py")
+    : path.join(process.resourcesPath, "app.asar.unpacked", "interpreter", "pup_interpreter.py");
     pythonProcess = spawn("python3", [interpreterPath], { stdio: "pipe" });
 
     let output = "";

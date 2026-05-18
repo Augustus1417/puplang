@@ -1,5 +1,6 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import CloseButtons from "./CloseButtons";
+import InstructionsModal from "./InstructionsModal";
 
 interface HeaderProps {
   code: string;
@@ -17,6 +18,7 @@ const Header: React.FC<HeaderProps> = ({
   setCurrentFilePath,
 }) => {
   const header = useRef<HTMLElement>(null);
+  const [showInstructions, setShowInstructions] = useState(false);
 
   useEffect(() => {
     if (!window.electron) return;
@@ -81,46 +83,58 @@ const Header: React.FC<HeaderProps> = ({
       setConsoleLog("Failed to Save As file");
     }
   };
-return (
-  <nav
-    ref={header}
-    className="h-10 dark:bg-main-dark bg-[#2c2c2c] z-10 drag px-3 border-b border-black/20 dark:border-white/10"
-  >
-    <div className="flex items-center justify-between h-full">
+  return (
+    <>
+      <nav
+        ref={header}
+        className="h-10 dark:bg-main-dark bg-[#2c2c2c] z-10 drag px-3 border-b border-black/20 dark:border-white/10"
+      >
+        <div className="flex items-center justify-between h-full">
 
-      {/* LEFT BUTTONS */}
-      <div className="flex items-center gap-2 no-drag">
-        <button
-          onClick={handleOpen}
-          className="px-3 py-1 rounded-md bg-gray-700 hover:bg-gray-600 text-white border border-white/10 text-sm"
-        >
-          Open
-        </button>
+          {/* LEFT BUTTONS */}
+          <div className="flex items-center gap-2 no-drag">
+            <button
+              onClick={handleOpen}
+              className="px-3 py-1 rounded-md bg-gray-700 hover:bg-gray-600 text-white border border-white/10 text-sm"
+            >
+              Open
+            </button>
 
-        <button
-          onClick={handleSave}
-          className="px-3 py-1 rounded-md bg-gray-700 hover:bg-gray-600 text-white border border-white/10 text-sm"
-        >
-          Save
-        </button>
+            <button
+              onClick={handleSave}
+              className="px-3 py-1 rounded-md bg-gray-700 hover:bg-gray-600 text-white border border-white/10 text-sm"
+            >
+              Save
+            </button>
 
-        <button
-          onClick={handleSaveAs}
-          className="px-3 py-1 rounded-md bg-gray-700 hover:bg-gray-600 text-white border border-white/10 text-sm"
-        >
-          Save As
-        </button>
-      </div>
+            <button
+              onClick={handleSaveAs}
+              className="px-3 py-1 rounded-md bg-gray-700 hover:bg-gray-600 text-white border border-white/10 text-sm"
+            >
+              Save As
+            </button>
 
-      {/* RIGHT WINDOW BUTTONS */}
-      <div className="no-drag flex items-center pr-2 [>&_*]:mx-1">
-        {window.electron && <CloseButtons />}
-      </div>
+            <div className="h-6 w-px bg-gray-600"></div>
 
-    </div>
-  </nav>
-);
+            <button
+              onClick={() => setShowInstructions(true)}
+              className="px-3 py-1 rounded-md bg-blue-700 hover:bg-blue-600 text-white border border-white/10 text-sm"
+              title="View Laurel language manual and syntax"
+            >
+              Help
+            </button>
+          </div>
 
+          {/* RIGHT WINDOW BUTTONS */}
+          <div className="no-drag flex items-center pr-2 [>&_*]:mx-1">
+            {window.electron && <CloseButtons />}
+          </div>
+
+        </div>
+      </nav>
+      <InstructionsModal isOpen={showInstructions} onClose={() => setShowInstructions(false)} />
+    </>
+  );
 };
 
 export default Header;

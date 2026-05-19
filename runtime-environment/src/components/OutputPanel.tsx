@@ -1,7 +1,7 @@
-import idleImg from "../assets/idle-laurel.png";
-import outputImg from "../assets/output-laurel.png";
-import inputImg from "../assets/input-laurel.png";
-import errorImg from "../assets/error-laurel.png";
+import idleImg from "../assets/idle.png";
+import outputImg from "../assets/output.png";
+import inputImg from "../assets/input.png";
+import errorImg from "../assets/error.png";
 
 interface OutputPanelProps {
   output: string;

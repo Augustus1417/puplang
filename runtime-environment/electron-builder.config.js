@@ -15,7 +15,7 @@ const config = {
   publish: null,
   artifactName: process.env.CHANNEL === 'beta' ? 'Setup-${productName}${version}.${ext}' : 'Setup-${productName}${version}.${ext}',
   win: {
-    icon: 'public/icon.ico',
+    icon: 'public/icon.png',
     target: [
       {
         target: "nsis",

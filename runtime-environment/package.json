@@ -19,7 +19,7 @@
         "start": "electronmon ./app",
         "electron:vite:build": "concurrently \"cross-env BROWSER=none bun dev\" \"wait-on http://localhost:5173 && bun build:dev:electron\"",
         "electron:dev": "concurrently \"bun electron:vite:build\" \"bun start\"",
-        "dist": "npm run build && electron-builder --config electron-builder.config.js -w"
+        "dist": "npm run build && electron-builder --config electron-builder.config.js"
     },
     "dependencies": {
         "@types/bun": "^1.2.4",

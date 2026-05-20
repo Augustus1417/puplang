@@ -24,7 +24,7 @@ const InstructionsModal: React.FC<InstructionsModalProps> = ({ isOpen, onClose }
       syntax: `# Declare a variable
 make num1
 make name
-make count`,
+make var`,
     },
     assignment: {
       description: "Assign values to variables",

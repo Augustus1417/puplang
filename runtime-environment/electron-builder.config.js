@@ -34,6 +34,7 @@ const config = {
         arch: ["x64"],
       },
     ],
+    icon: 'public/icon.png',
   },
 }
 
